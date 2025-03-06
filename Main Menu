@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hood River Middle School Menu</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background-color: #4b6b75;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo {
+      width: 60px;
+      height: 60px;
+      margin-right: 15px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    h1 {
+      font-size: 24px;
+    }
+    
+    .current-info {
+      background-color: #e9e9e9;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .menu-section {
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .section-header {
+      background-color: #4b6b75;
+      color: white;
+      padding: 12px 15px;
+      font-size: 18px;
+    }
+    
+    .menu-links {
+      padding: 15px;
+    }
+    
+    .menu-item {
+      display: block;
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+      color: #333;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+    
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+    
+    .menu-item:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .current-period {
+      background-color: #e6f7ff;
+      border-left: 5px solid #0078d7;
+    }
+    
+    .time-display {
+      font-weight: bold;
+      color: #4b6b75;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://raw.githubusercontent.com/Somebody437/School-menu/refs/heads/main/IMG_1977.jpeg" alt="HRMS Logo" class="logo">
+    <h1>Hood River Middle School Menu</h1>
+  </header>
+  
+  <div class="container">
+    <div class="current-info">
+      <p>Current Time: <span id="current-time" class="time-display"></span></p>
+      <p>Current Day: <span id="current-day" class="time-display"></span></p>
+      <p>Current Period: <span id="current-period" class="time-display"></span></p>
+    </div>
+    
+    <div class="menu-section">
+      <div class="section-header">Links</div>
+      <div class="menu-links">
+        <a href="https://classroom.google.com" target="_blank" class="menu-item">Google Classroom Home</a>
+        <a href="#" id="current-class-link" class="menu-item">Current Class</a>
+        <a href="https://esp41pwhac.eschoolplus.powerschool.com/HomeAccess/Account/LogOn" target="_blank" class="menu-item">HAC</a>
+        <a href="https://orved.geniussis.com/FEDashboard.aspx" target="_blank" class="menu-item hidden" id="orved-link">ORVED</a>
+        <a href="https://docs.google.com/document/d/1A41ZLiyWYqCaTiIiIwpa6Hn3BkDAumdA7BwQx9ahROE/view" target="_blank" class="menu-item hidden" id="proof-resources">Proof Resources</a>
+      </div>
+    </div>
+    
+    <div class="menu-section">
+      <div class="section-header">All Classes</div>
+      <div class="menu-links">
+        <a href="https://classroom.google.com/w/Njg1MTQzNDE3ODYz/t/all" target="_blank" class="menu-item" id="period1">1st Period</a>
+        <a href="#" onclick="openSecondPeriod(event)" class="menu-item" id="period2">2nd Period</a>
+        <a href="https://classroom.google.com/w/Njg1MTQzNDk0OTQ4/t/all" target="_blank" class="menu-item" id="period3">3rd Period</a>
+        <a href="#" class="menu-item" id="period4">4th Period</a>
+        <a href="https://classroom.google.com/w/Njg1MTQzMzE2NjAz/t/all" target="_blank" class="menu-item" id="period5">5th Period</a>
+        <a href="https://classroom.google.com/w/Njg1MTQzNTY2NDIz/t/all" target="_blank" class="menu-item" id="period6">6th Period</a>
+        <a href="https://classroom.google.com/w/Njg1MTQzNTQ3MzIx/t/all" target="_blank" class="menu-item" id="period7">7th Period/Advisory</a>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    Hood River Middle School • 1602 May Street • Hood River, OR 97031
+  </footer>
+
+  <script>
+    // Function to determine the current period based on time and day
+    function getCurrentPeriod() {
+      const now = new Date();
+      const day = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const time = hours * 60 + minutes; // Convert to minutes for easier comparison
+      
+      // Format for displaying current time
+      document.getElementById('current-time').textContent = 
+        `${hours > 12 ? hours - 12 : hours}:${minutes < 10 ? '0' + minutes : minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
+      
+      // Display day of week
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      document.getElementById('current-day').textContent = days[day];
+      
+      // Not school hours
+      if (day === 0 || day === 6 || time < 8 * 60 + 35 || time > 15 * 60 + 25) {
+        return "Not School Hours";
+      }
+      
+      // Monday (Late Start)
+      if (day === 1) {
+        if (time >= 9 * 60 + 35 && time < 10 * 60 + 30) return "1";
+        if (time >= 10 * 60 + 35 && time < 11 * 60 + 20) return "2";
+        if (time >= 11 * 60 + 25 && time < 12 * 60 + 10) return "3";
+        if (time >= 12 * 60 + 30 && time < 13 * 60 + 50) return "4"; // 4th period/Lunch
+        if (time >= 12 * 60 + 55 && time < 14 * 60) return "5";
+        if (time >= 14 * 60 + 5 && time < 15 * 60) return "6";
+        if (time >= 15 * 60 + 20 && time < 15 * 60 + 25) return "7"; // Advisory return
+      }
+      
+      // Tuesday through Friday
+      if (day >= 2 && day <= 5) {
+        if (time >= 8 * 60 + 45 && time < 9 * 60 + 30) return "1";
+        if (time >= 9 * 60 + 35 && time < 10 * 60 + 20) return "2";
+        if (time >= 10 * 60 + 25 && time < 11 * 60 + 10) return "3";
+        if (time >= 11 * 60 + 30 && time < 12 * 60 + 45) return "4"; // 4th period/Lunch
+        if (time >= 12 * 60 + 50 && time < 13 * 60 + 40) return "5";
+        if (time >= 13 * 60 + 45 && time < 14 * 60 + 30) return "6";
+        if (time >= 14 * 60 + 35 && time < 15 * 60 + 20) return "7";
+      }
+      
+      return "Between Classes";
+    }
+    
+    // Function to highlight the current period and update the current-class link
+    function updateCurrentPeriod() {
+      const period = getCurrentPeriod();
+      document.getElementById('current-period').textContent = period;
+      
+      // Reset all highlights
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('current-period');
+      });
+      
+      // Hide/show 4th period specific links
+      const orvedLink = document.getElementById('orved-link');
+      const proofResourcesLink = document.getElementById('proof-resources');
+      
+      if (period === "4") {
+        orvedLink.classList.remove('hidden');
+        proofResourcesLink.classList.remove('hidden');
+      } else {
+        orvedLink.classList.add('hidden');
+        proofResourcesLink.classList.add('hidden');
+      }
+      
+      // Set current class link
+      const currentClassLink = document.getElementById('current-class-link');
+      
+      if (period === "1") {
+        document.getElementById('period1').classList.add('current-period');
+        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNDE3ODYz/t/all";
+        currentClassLink.textContent = "Current Class";
+      } else if (period === "2") {
+        document.getElementById('period2').classList.add('current-period');
+        currentClassLink.href = "https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all";
+        currentClassLink.textContent = "Current Class";
+      } else if (period === "3") {
+        document.getElementById('period3').classList.add('current-period');
+        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNDk0OTQ4/t/all";
+        currentClassLink.textContent = "Current Class";
+      } else if (period === "4") {
+        document.getElementById('period4').classList.add('current-period');
+        currentClassLink.href = "https://orved.geniussis.com/FEDashboard.aspx";
+        currentClassLink.textContent = "ORVED";
+      } else if (period === "5") {
+        document.getElementById('period5').classList.add('current-period');
+        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzMzE2NjAz/t/all";
+        currentClassLink.textContent = "Current Class";
+      } else if (period === "6") {
+        document.getElementById('period6').classList.add('current-period');
+        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNTY2NDIz/t/all";
+        currentClassLink.textContent = "Current Class";
+      } else if (period === "7") {
+        document.getElementById('period7').classList.add('current-period');
+        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNTQ3MzIx/t/all";
+        currentClassLink.textContent = "Current Class";
+      } else {
+        currentClassLink.href = "https://classroom.google.com";
+        currentClassLink.textContent = "Current Class";
+      }
+    }
+    
+    // Function to open second period links (two tabs)
+    function openSecondPeriod(event) {
+      event.preventDefault();
+      window.open("https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all", "_blank");
+      window.open("https://classroom.google.com/c/NzMyMjg2NDc2MzA0", "_blank");
+    }
+    
+    // Update the current period every minute
+    updateCurrentPeriod();
+    setInterval(updateCurrentPeriod, 60000);
+  </script>
+</body>
+</html>
