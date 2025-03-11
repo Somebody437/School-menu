@@ -213,6 +213,89 @@
       font-size: 18px;
     }
     
+    /* A/B Day Switch Styles */
+    .day-switch-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      background-color: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    .switch-label {
+      font-weight: 600;
+      margin-right: 15px;
+      color: #4b6b75;
+    }
+    
+    .day-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    
+    .day-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #4b6b75;
+    }
+    
+    input:focus + .slider {
+      box-shadow: 0 0 1px #4b6b75;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    .day-indicator {
+      display: flex;
+      justify-content: space-between;
+      width: 60px;
+      margin-left: 15px;
+    }
+    
+    .day-label {
+      font-weight: 600;
+      color: #555;
+    }
+    
+    .day-label.active {
+      color: #4b6b75;
+    }
+    
     /* Responsive design improvements */
     @media (max-width: 768px) {
       header {
@@ -260,6 +343,19 @@
       <div class="info-row">
         <div class="info-label">Schedule Type:</div>
         <div><span id="schedule-type" class="time-display">Regular</span></div>
+      </div>
+    </div>
+    
+    <!-- A/B Day Switch -->
+    <div class="day-switch-container">
+      <span class="switch-label">Day Type:</span>
+      <label class="day-switch">
+        <input type="checkbox" id="day-toggle" onchange="toggleDayType()">
+        <span class="slider"></span>
+      </label>
+      <div class="day-indicator">
+        <span class="day-label" id="a-day-label">A</span>
+        <span class="day-label" id="b-day-label">B</span>
       </div>
     </div>
     
@@ -312,6 +408,53 @@
   </footer>
 
   <script>
+    // Store day type state
+    let isDayB = false;
+    
+    // A/B Day Links
+    const secondPeriodLinks = {
+      A: "https://classroom.google.com/w/<placeHolder>/t/all",
+      B: "https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all"
+    };
+    
+    // Initialize day type display
+    function initDayType() {
+      // Check if we have a saved preference
+      const savedDayType = localStorage.getItem('dayType');
+      if (savedDayType === 'B') {
+        isDayB = true;
+        document.getElementById('day-toggle').checked = true;
+      } else {
+        isDayB = false;
+        document.getElementById('day-toggle').checked = false;
+      }
+      updateDayLabels();
+    }
+    
+    // Toggle between A and B days
+    function toggleDayType() {
+      isDayB = document.getElementById('day-toggle').checked;
+      // Save preference
+      localStorage.setItem('dayType', isDayB ? 'B' : 'A');
+      updateDayLabels();
+      // Update the current period info in case it's second period
+      updateCurrentPeriod();
+    }
+    
+    // Update the visual indicators for A/B day
+    function updateDayLabels() {
+      const aDayLabel = document.getElementById('a-day-label');
+      const bDayLabel = document.getElementById('b-day-label');
+      
+      if (isDayB) {
+        aDayLabel.classList.remove('active');
+        bDayLabel.classList.add('active');
+      } else {
+        aDayLabel.classList.add('active');
+        bDayLabel.classList.remove('active');
+      }
+    }
+    
     // Tab functionality
     function openTab(tabName) {
       const tabs = document.getElementsByClassName("tab");
@@ -442,10 +585,12 @@
         currentHeader.textContent = "1st Period";
       } else if (period === "2") {
         document.getElementById('period2').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all";
-        currentClassLink.textContent = "2nd Period Google Classroom";
-        tabText += "2nd Period";
-        currentHeader.textContent = "2nd Period";
+        // Use the appropriate link based on A/B day
+        const secondPeriodLink = isDayB ? secondPeriodLinks.B : secondPeriodLinks.A;
+        currentClassLink.href = secondPeriodLink;
+        currentClassLink.textContent = `2nd Period Google Classroom (${isDayB ? 'B' : 'A'} Day)`;
+        tabText += `2nd Period (${isDayB ? 'B' : 'A'})`;
+        currentHeader.textContent = `2nd Period (${isDayB ? 'B' : 'A'} Day)`;
       } else if (period === "3") {
         document.getElementById('period3').classList.add('current-period');
         currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNDk0OTQ4/t/all";
@@ -491,12 +636,21 @@
       document.getElementById('current-tab-text').textContent = tabText;
     }
     
-    // Function to open second period links (two tabs)
+    // Function to open second period links based on A/B day setting
     function openSecondPeriod(event) {
       event.preventDefault();
-      window.open("https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all", "_blank");
-      window.open("https://classroom.google.com/c/NzMyMjg2NDc2MzA0", "_blank");
+      
+      // Use the appropriate link based on A/B day
+      if (isDayB) {
+        window.open(secondPeriodLinks.B, "_blank");
+      } else {
+        window.open(secondPeriodLinks.A, "_blank");
+        window.open("https://classroom.google.com/c/NzMyMjg2NDc2MzA0", "_blank");
+      }
     }
+    
+    // Initialize day type setting
+    initDayType();
     
     // Update the current period every minute
     updateCurrentPeriod();
