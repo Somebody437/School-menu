@@ -424,6 +424,7 @@
       const proofResourcesLink = document.getElementById('proof-resources');
       
       if (period === "4") {
+        orvedLink.classList.remove('hidden');
         proofResourcesLink.classList.remove('hidden');
       } else {
         orvedLink.classList.add('hidden');
@@ -442,7 +443,8 @@
         currentHeader.textContent = "1st Period";
       } else if (period === "2") {
         document.getElementById('period2').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all";
+        currentClassLink.href = "#";
+        currentClassLink.onclick = openSecondPeriod;
         currentClassLink.textContent = "2nd Period Google Classroom";
         tabText += "2nd Period";
         currentHeader.textContent = "2nd Period";
@@ -494,8 +496,8 @@
     // Function to open second period links (two tabs)
     function openSecondPeriod(event) {
       event.preventDefault();
-      window.open("https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all", "_blank");
-      window.open("https://classroom.google.com/c/NzMyMjg2NDc2MzA0", "_blank");
+      window.open("https://classroom.google.com/w/<placeholder>/t/all", "_blank");
+      window.open("https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all", "_blank");
     }
     
     // Update the current period every minute
