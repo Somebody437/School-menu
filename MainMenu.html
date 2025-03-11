@@ -69,6 +69,7 @@
     .info-row {
       display: flex;
       margin-bottom: 10px;
+      align-items: center;
     }
     
     .info-label {
@@ -235,6 +236,100 @@
         font-size: 14px;
       }
     }
+
+    /* Additional style for period links */
+    .day-option {
+      margin-left: 8px;
+      color: #4b6b75;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    
+    .day-option:hover {
+      text-decoration: underline;
+    }
+    
+    .day-separator {
+      margin: 0 5px;
+      color: #ccc;
+    }
+    
+    /* Change button styles */
+    .change-button {
+      background-color: #4b6b75;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: all 0.2s;
+    }
+    
+    .change-button:hover {
+      background-color: #3a545c;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    /* Dropdown styles */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 180px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      border-radius: 8px;
+      z-index: 1;
+      overflow: hidden;
+      animation: fadeIn 0.2s;
+    }
+    
+    .dropdown-content.show {
+      display: block;
+    }
+    
+    .dropdown-option {
+      color: #333;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: all 0.2s;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .dropdown-option:last-child {
+      border-bottom: none;
+    }
+    
+    .dropdown-option:hover {
+      background-color: #f5f8fa;
+    }
+    
+    .dropdown-option.selected {
+      background-color: #e6f7ff;
+      font-weight: 600;
+      color: #4b6b75;
+    }
+    
+    .dropdown-option:before {
+      content: "•";
+      margin-right: 8px;
+      color: #4b6b75;
+    }
+    
+    .dropdown-option.selected:before {
+      content: "✓";
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -259,7 +354,17 @@
       </div>
       <div class="info-row">
         <div class="info-label">Schedule Type:</div>
-        <div><span id="schedule-type" class="time-display">Regular</span></div>
+        <div>
+          <span id="schedule-type" class="time-display">Regular</span>
+          <div class="dropdown">
+            <button class="change-button" onclick="toggleDropdown()">Change</button>
+            <div id="scheduleDropdown" class="dropdown-content">
+              <a href="#" class="dropdown-option selected" data-type="regular" onclick="changeSchedule('regular', event)">Regular</a>
+              <a href="#" class="dropdown-option" data-type="onehour" onclick="changeSchedule('onehour', event)">One-Hour Delay</a>
+              <a href="#" class="dropdown-option" data-type="twohour" onclick="changeSchedule('twohour', event)">Two-Hour Delay</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -276,6 +381,7 @@
         <div class="section-header" id="current-header">Current Class</div>
         <div class="menu-links">
           <a href="#" id="current-class-link" class="menu-item">Loading Current Class...</a>
+          <!-- Single ORVED link that appears during 4th period -->
           <a href="https://orved.geniussis.com/FEDashboard.aspx" target="_blank" class="menu-item hidden" id="orved-link">ORVED Dashboard</a>
           <a href="https://docs.google.com/document/d/1A41ZLiyWYqCaTiIiIwpa6Hn3BkDAumdA7BwQx9ahROE/view" target="_blank" class="menu-item hidden" id="proof-resources">Proof Resources</a>
         </div>
@@ -296,7 +402,13 @@
         <div class="section-header">All Classes</div>
         <div class="menu-links">
           <a href="https://classroom.google.com/w/Njg1MTQzNDE3ODYz/t/all" target="_blank" class="menu-item" id="period1">1st Period</a>
-          <a href="#" onclick="openSecondPeriod(event)" class="menu-item" id="period2">2nd Period</a>
+          <!-- Modified 2nd period with A/B day options -->
+          <div class="menu-item" id="period2">
+            2nd Period:
+            <a href="https://classroom.google.com/w/<placeholder>/t/all" target="_blank" class="day-option">A Day</a>
+            <span class="day-separator">|</span>
+            <a href="https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all" target="_blank" class="day-option">B Day</a>
+          </div>
           <a href="https://classroom.google.com/w/Njg1MTQzNDk0OTQ4/t/all" target="_blank" class="menu-item" id="period3">3rd Period</a>
           <a href="https://orved.geniussis.com/FEDashboard.aspx" target="_blank" class="menu-item" id="period4">4th Period (ORVED)</a>
           <a href="https://classroom.google.com/w/Njg1MTQzMzE2NjAz/t/all" target="_blank" class="menu-item" id="period5">5th Period</a>
@@ -333,6 +445,56 @@
       // Add active class to the clicked tab
       event.currentTarget.classList.add("active");
     }
+    
+    // Store the current schedule type
+    let currentScheduleType = "regular";
+    
+    // Toggle the dropdown
+    function toggleDropdown() {
+      document.getElementById("scheduleDropdown").classList.toggle("show");
+      
+      // Close the dropdown when clicking outside of it
+      window.onclick = function(event) {
+        if (!event.target.matches('.change-button')) {
+          const dropdowns = document.getElementsByClassName("dropdown-content");
+          for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+              openDropdown.classList.remove('show');
+            }
+          }
+        }
+      }
+    }
+    
+    // Change schedule type
+    function changeSchedule(type, event) {
+      event.preventDefault();
+      
+      // Update the current schedule type
+      currentScheduleType = type;
+      
+      // Update the displayed schedule type
+      let displayText = "Regular";
+      if (type === "onehour") displayText = "One-Hour Delay";
+      if (type === "twohour") displayText = "Two-Hour Delay";
+      
+      document.getElementById('schedule-type').textContent = displayText;
+      
+      // Update selected state in dropdown
+      const options = document.querySelectorAll('.dropdown-option');
+      options.forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      event.target.classList.add('selected');
+      
+      // Hide dropdown
+      document.getElementById("scheduleDropdown").classList.remove("show");
+      
+      // Update current period
+      updateCurrentPeriod();
+    }
   
     // Function to determine the current period based on time and day
     function getCurrentPeriod() {
@@ -344,23 +506,19 @@
       
       // Format for displaying current time
       document.getElementById('current-time').textContent = 
-        `${hours > 12 ? hours - 12 : hours}:${minutes < 10 ? '0' + minutes : minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
+        `${hours > 12 ? hours - 12 : hours === 0 ? 12 : hours}:${minutes < 10 ? '0' + minutes : minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
       
       // Display day of week
       const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
       document.getElementById('current-day').textContent = days[day];
-      
-      // Check if today is a two-hour delay day
-      const isDelay = isDelayDay();
-      document.getElementById('schedule-type').textContent = isDelay ? "Two-Hour Delay" : (day === 1 ? "Monday Late Start" : "Regular");
       
       // Not school hours
       if (day === 0 || day === 6 || time < 8 * 60 + 35 || time > 15 * 60 + 25) {
         return "Not School Hours";
       }
       
-      // Two-Hour Delay - Takes precedence if active
-      if (isDelay) {
+      // Two-Hour Delay
+      if (currentScheduleType === "twohour") {
         // 7th grade column from Two-Hour Delay schedule
         if (time >= 10 * 60 + 35 && time < 11 * 60 + 22) return "1";
         if (time >= 11 * 60 + 27 && time < 12 * 60 + 04) return "2";
@@ -371,8 +529,21 @@
         if (time >= 14 * 60 + 06 && time < 14 * 60 + 43) return "5";
         if (time >= 14 * 60 + 48 && time < 15 * 60 + 30) return "6";
       }
+      // One-Hour Delay
+      else if (currentScheduleType === "onehour") {
+        // 7th grade column from One-Hour Delay schedule
+        if (time >= 9 * 60 + 35 && time < 10 * 60 + 25) return "1";
+        if (time >= 10 * 60 + 30 && time < 11 * 60 + 10) return "2";
+        if (time >= 11 * 60 + 15 && time < 11 * 60 + 55) return "3";
+        if (time >= 11 * 60 + 55 && time < 12 * 60 + 15) return "Lunch";
+        if (time >= 12 * 60 + 15 && time < 12 * 60 + 35) return "Recess";
+        if (time >= 12 * 60 + 40 && time < 13 * 60 + 20) return "4";
+        if (time >= 13 * 60 + 25 && time < 14 * 60 + 05) return "5";
+        if (time >= 14 * 60 + 10 && time < 14 * 60 + 50) return "6";
+        if (time >= 14 * 60 + 55 && time < 15 * 60 + 30) return "7";
+      }
       // Monday (Late Start) - Using the 7th grade column
-      else if (day === 1) {
+      else if (day === 1 && currentScheduleType === "regular") {
         if (time >= 9 * 60 + 35 && time < 10 * 60 + 30) return "1";
         if (time >= 10 * 60 + 35 && time < 11 * 60 + 20) return "2";
         if (time >= 11 * 60 + 21 && time < 11 * 60 + 40) return "Lunch";
@@ -383,7 +554,7 @@
         if (time >= 14 * 60 + 35 && time < 15 * 60 + 30) return "6";
       }
       // Tuesday through Friday - Using the 7th grade column
-      else if (day >= 2 && day <= 5) {
+      else if (day >= 2 && day <= 5 && currentScheduleType === "regular") {
         if (time >= 8 * 60 + 45 && time < 9 * 60 + 36) return "1";
         if (time >= 9 * 60 + 41 && time < 10 * 60 + 32) return "2";
         if (time >= 10 * 60 + 37 && time < 11 * 60 + 28) return "3";
@@ -396,14 +567,6 @@
       }
       
       return "Between Classes";
-    }
-    
-    // Placeholder function to determine if today is a delay day
-    // You would need to implement this based on your school's calendar
-    function isDelayDay() {
-      // For now, we'll return false
-      // In a real implementation, you might check against known delay dates
-      return false;
     }
     
     // Function to highlight the current period and update the current-class link
@@ -424,6 +587,7 @@
       const proofResourcesLink = document.getElementById('proof-resources');
       
       if (period === "4") {
+        orvedLink.classList.remove('hidden');
         proofResourcesLink.classList.remove('hidden');
       } else {
         orvedLink.classList.add('hidden');
@@ -442,8 +606,12 @@
         currentHeader.textContent = "1st Period";
       } else if (period === "2") {
         document.getElementById('period2').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all";
-        currentClassLink.textContent = "2nd Period Google Classroom";
+        // Updated to show both A Day and B Day options
+        currentClassLink.innerHTML = '2nd Period: ' +
+          '<a href="https://classroom.google.com/w/<placeholder>/t/all" target="_blank" class="day-option">A Day</a>' +
+          '<span class="day-separator">|</span>' +
+          '<a href="https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all" target="_blank" class="day-option">B Day</a>';
+        currentClassLink.removeAttribute('href');
         tabText += "2nd Period";
         currentHeader.textContent = "2nd Period";
       } else if (period === "3") {
@@ -489,13 +657,6 @@
       }
       
       document.getElementById('current-tab-text').textContent = tabText;
-    }
-    
-    // Function to open second period links (two tabs)
-    function openSecondPeriod(event) {
-      event.preventDefault();
-      window.open("https://classroom.google.com/w/NzMyMjg4NTc5OTU0/t/all", "_blank");
-      window.open("https://classroom.google.com/c/NzMyMjg2NDc2MzA0", "_blank");
     }
     
     // Update the current period every minute
