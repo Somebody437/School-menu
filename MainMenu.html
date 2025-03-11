@@ -235,6 +235,23 @@
         font-size: 14px;
       }
     }
+
+    /* Additional style for period links */
+    .day-option {
+      margin-left: 8px;
+      color: #4b6b75;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    
+    .day-option:hover {
+      text-decoration: underline;
+    }
+    
+    .day-separator {
+      margin: 0 5px;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
@@ -276,6 +293,7 @@
         <div class="section-header" id="current-header">Current Class</div>
         <div class="menu-links">
           <a href="#" id="current-class-link" class="menu-item">Loading Current Class...</a>
+          <!-- Single ORVED link that appears during 4th period -->
           <a href="https://orved.geniussis.com/FEDashboard.aspx" target="_blank" class="menu-item hidden" id="orved-link">ORVED Dashboard</a>
           <a href="https://docs.google.com/document/d/1A41ZLiyWYqCaTiIiIwpa6Hn3BkDAumdA7BwQx9ahROE/view" target="_blank" class="menu-item hidden" id="proof-resources">Proof Resources</a>
         </div>
@@ -296,7 +314,13 @@
         <div class="section-header">All Classes</div>
         <div class="menu-links">
           <a href="https://classroom.google.com/w/Njg1MTQzNDE3ODYz/t/all" target="_blank" class="menu-item" id="period1">1st Period</a>
-          <a href="#" onclick="openSecondPeriod(event)" class="menu-item" id="period2">2nd Period</a>
+          <!-- Modified 2nd period with A/B day options -->
+          <div class="menu-item" id="period2">
+            2nd Period:
+            <a href="https://classroom.google.com/w/<placeholder>/t/all" target="_blank" class="day-option">A Day</a>
+            <span class="day-separator">|</span>
+            <a href="https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all" target="_blank" class="day-option">B Day</a>
+          </div>
           <a href="https://classroom.google.com/w/Njg1MTQzNDk0OTQ4/t/all" target="_blank" class="menu-item" id="period3">3rd Period</a>
           <a href="https://orved.geniussis.com/FEDashboard.aspx" target="_blank" class="menu-item" id="period4">4th Period (ORVED)</a>
           <a href="https://classroom.google.com/w/Njg1MTQzMzE2NjAz/t/all" target="_blank" class="menu-item" id="period5">5th Period</a>
@@ -399,7 +423,6 @@
     }
     
     // Placeholder function to determine if today is a delay day
-    // You would need to implement this based on your school's calendar
     function isDelayDay() {
       // For now, we'll return false
       // In a real implementation, you might check against known delay dates
@@ -443,9 +466,12 @@
         currentHeader.textContent = "1st Period";
       } else if (period === "2") {
         document.getElementById('period2').classList.add('current-period');
-        currentClassLink.href = "#";
-        currentClassLink.onclick = openSecondPeriod;
-        currentClassLink.textContent = "2nd Period Google Classroom";
+        // Updated to show both A Day and B Day options
+        currentClassLink.innerHTML = '2nd Period: ' +
+          '<a href="https://classroom.google.com/w/<placeholder>/t/all" target="_blank" class="day-option">A Day</a>' +
+          '<span class="day-separator">|</span>' +
+          '<a href="https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all" target="_blank" class="day-option">B Day</a>';
+        currentClassLink.removeAttribute('href');
         tabText += "2nd Period";
         currentHeader.textContent = "2nd Period";
       } else if (period === "3") {
@@ -491,13 +517,6 @@
       }
       
       document.getElementById('current-tab-text').textContent = tabText;
-    }
-    
-    // Function to open second period links (two tabs)
-    function openSecondPeriod(event) {
-      event.preventDefault();
-      window.open("https://classroom.google.com/w/<placeholder>/t/all", "_blank");
-      window.open("https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all", "_blank");
     }
     
     // Update the current period every minute
