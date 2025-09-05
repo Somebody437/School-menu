@@ -583,11 +583,11 @@
       // Update the current tab text
       let tabText = "Current: ";
       
-      // Hide/show 4th period specific links
+      // Hide/show 2nd period specific links
       const orvedLink = document.getElementById('orved-link');
       const proofResourcesLink = document.getElementById('proof-resources');
       
-      if (period === "4") {
+      if (period === "2") {
         orvedLink.classList.remove('hidden');
         proofResourcesLink.classList.remove('hidden');
       } else {
@@ -601,47 +601,46 @@
       
       if (period === "1") {
         document.getElementById('period1').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNDE3ODYz/t/all";
-        currentClassLink.textContent = "1st Period Google Classroom";
+        currentClassLink.innerHTML = '1st Period: ' +
+          '<a href="https://classroom.google.com/w/Nzk1MzE5ODQ4NTk4/t/all" target="_blank" class="day-option">A Day</a>' +
+          '<span class="day-separator">|</span>' +
+          '<a href="https://classroom.google.com/w/Nzk1MzE5ODI1OTMw/t/all" target="_blank" class="day-option">B Day</a>';
+        currentClassLink.removeAttribute('href');
         tabText += "1st Period";
         currentHeader.textContent = "1st Period";
       } else if (period === "2") {
         document.getElementById('period2').classList.add('current-period');
-        // Updated to show both A Day and B Day options
-        currentClassLink.innerHTML = '2nd Period: ' +
-          '<a href="https://classroom.google.com/w/NzU4MTUyNDQ4MDky/t/all" target="_blank" class="day-option">A Day</a>' +
-          '<span class="day-separator">|</span>' +
-          '<a href="https://classroom.google.com/w/NzU4MTUyMzIxMDcx/t/all" target="_blank" class="day-option">B Day</a>';
-        currentClassLink.removeAttribute('href');
+        currentClassLink.href = "https://lti.flvsgl.com/flvs-cat-content/urmm45447u7c6jg1idpofq9fus/flvs-cat-session/algebra2_v19/global/glossary.htm";
+        currentClassLink.textContent = "Algebra Course Glosary";
         tabText += "2nd Period";
         currentHeader.textContent = "2nd Period";
       } else if (period === "3") {
         document.getElementById('period3').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNDk0OTQ4/t/all";
+        currentClassLink.href = "https://classroom.google.com/w/Nzk1MzE5NjcxMTcw/t/all";
         currentClassLink.textContent = "3rd Period Google Classroom";
         tabText += "3rd Period";
         currentHeader.textContent = "3rd Period";
       } else if (period === "4") {
         document.getElementById('period4').classList.add('current-period');
-        currentClassLink.href = "https://www-awu.aleks.com/alekscgi/x/Isl.exe/1o_u-IgNsIkr7j8P3jH-lvWlENdr7xj_1SoekWMaP1As1fEhnCI79H4S5nZlw-Wivo67H3Zhy8UNsBjWPn3ya8TgniO1YdIJJbH2hTTiTxjXInLy7jSR?1oBw7QYjlbavbSPXtx-YCjsh_7mMmrq#home";
-        currentClassLink.textContent = "ALEKS";
+        currentClassLink.href = "https://classroom.google.com/w/Nzk1MzE5OTg5NjM3/t/all";
+        currentClassLink.textContent = "4th Period Google Classroom";
         tabText += "4th Period";
         currentHeader.textContent = "4th Period";
       } else if (period === "5") {
         document.getElementById('period5').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzMzE2NjAz/t/all";
+        currentClassLink.href = "https://classroom.google.com/w/Nzk1MzE5NzE4MTM5/t/all";
         currentClassLink.textContent = "5th Period Google Classroom";
         tabText += "5th Period";
         currentHeader.textContent = "5th Period";
       } else if (period === "6") {
         document.getElementById('period6').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNTY2NDIz/t/all";
+        currentClassLink.href = "https://classroom.google.com/w/Nzk1MzE5NzQ5NDM3/t/all";
         currentClassLink.textContent = "6th Period Google Classroom";
         tabText += "6th Period";
         currentHeader.textContent = "6th Period";
       } else if (period === "7") {
         document.getElementById('period7').classList.add('current-period');
-        currentClassLink.href = "https://classroom.google.com/w/Njg1MTQzNTQ3MzIx/t/all";
+        currentClassLink.href = "https://classroom.google.com/w/Nzk1MzE5OTM5MjI1/t/all";
         currentClassLink.textContent = "7th Period/Advisory Google Classroom";
         tabText += "7th Period";
         currentHeader.textContent = "7th Period/Advisory";
